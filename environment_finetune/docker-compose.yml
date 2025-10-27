@@ -1,0 +1,27 @@
+services:
+  qwen3-vl:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    user: "${UID}:${GID}"
+    image: qwen3-vl-finetune:latest
+    shm_size: '2gb'
+    container_name: qwen3-vl-finetune-container
+    volumes:
+      - /home/shimosaba/python_project/Qwen3-VL:/workspace
+      - /home/shimosaba/python_project/internvl_chat/input:/input
+      - /home/shimosaba/python_project/Qwen3-VL/qwen-vl-finetune/.triton:/.triton
+      - /etc/passwd:/etc/passwd:ro
+      - /etc/group:/etc/group:ro
+    deploy:
+      resources:
+        limits:
+          cpus: '4'
+          memory: 64G
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    tty: true
+    stdin_open: true
